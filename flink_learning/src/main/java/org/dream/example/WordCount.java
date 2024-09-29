@@ -1,4 +1,4 @@
-package org.dream;
+package org.dream.example;
 
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
