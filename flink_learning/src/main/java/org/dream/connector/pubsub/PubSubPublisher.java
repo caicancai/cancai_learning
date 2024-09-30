@@ -10,13 +10,13 @@ import org.slf4j.LoggerFactory;
 import java.math.BigInteger;
 
 /** Helper class to send PubSubMessages to a PubSub topic. */
-class PubSubPublisher {
-    private static final Logger LOG = LoggerFactory.getLogger(PubSubExample.class);
+public class PubSubPublisher {
+
 
     private final String projectName;
     private final String topicName;
 
-    PubSubPublisher(String projectName, String topicName) {
+    public PubSubPublisher(String projectName, String topicName) {
         this.projectName = projectName;
         this.topicName = topicName;
     }
@@ -27,7 +27,7 @@ class PubSubPublisher {
      *
      * @param amountOfMessages amount of messages to send
      */
-    void publish(int amountOfMessages) {
+    public void publish(int amountOfMessages) {
         Publisher publisher = null;
         try {
             publisher = Publisher.newBuilder(TopicName.of(projectName, topicName)).build();
@@ -36,7 +36,7 @@ class PubSubPublisher {
                 PubsubMessage message = PubsubMessage.newBuilder().setData(messageData).build();
                 publisher.publish(message).get();
 
-                LOG.info("Published message with payload: " + i);
+                System.out.println("Published message with payload: " + i);
                 Thread.sleep(100L);
             }
         } catch (Exception e) {

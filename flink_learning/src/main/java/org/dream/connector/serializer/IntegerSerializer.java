@@ -1,4 +1,4 @@
-package org.dream.connector.pubsub;
+package org.dream.connector.serializer;
 
 import org.apache.flink.api.common.serialization.SerializationSchema;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
@@ -13,7 +13,7 @@ import java.math.BigInteger;
  * Deserialization schema to deserialize messages produced by {@link PubSubPublisher}. The byte[]
  * received by this schema must contain a single Integer.
  */
-class IntegerSerializer
+public class IntegerSerializer
         implements PubSubDeserializationSchema<Integer>, SerializationSchema<Integer> {
 
     @Override

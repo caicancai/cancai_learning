@@ -4,6 +4,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.gcp.pubsub.PubSubSink;
 import org.apache.flink.streaming.connectors.gcp.pubsub.PubSubSource;
 
+import org.dream.connector.serializer.IntegerSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,6 @@ public class PubSubExample {
 
     public static void main(String[] args) throws Exception {
         // parse input arguments
-
         PubSubPublisher pubSubPublisher = new PubSubPublisher(projectName, outputTopicName);
         pubSubPublisher.publish(10);
 
@@ -53,6 +53,11 @@ public class PubSubExample {
 
     private static Integer printAndReturn(Integer i) {
         LOG.info("Processed message with payload: " + i);
+        return i;
+    }
+
+    private static String printAndReturn(String i) {
+        System.out.println("Processed message with payload: " + i);
         return i;
     }
 }
