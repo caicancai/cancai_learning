@@ -90,8 +90,10 @@ public class BigQueryTuple2Example {
                 Tuple2<String,String> record = new Tuple2<>();
                 try {
                     JsonNode jsonNode = MAPPER.readTree(message.getData().toStringUtf8());
-                        record.f0 = "string";
-                        record.f1 = jsonNode.get("string").asText();
+                    for (Schema.Field field : avroSchema.getFields()) {
+                        record.f0 = field.name();
+                        record.f1 = jsonNode.get(field.name()).asText();
+                    }
                 } catch (IOException e) {
                     throw new RuntimeException("Failed to deserialize PubsubMessage: " + message.getData().toStringUtf8(), e);
                 }
