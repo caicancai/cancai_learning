@@ -1,21 +1,19 @@
 package org.dream.connector.bigquery;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.cloud.flink.bigquery.common.config.BigQueryConnectOptions;
 import com.google.cloud.flink.bigquery.sink.BigQuerySink;
 import com.google.cloud.flink.bigquery.sink.BigQuerySinkConfig;
 import com.google.cloud.flink.bigquery.sink.serializer.BigQuerySchemaProvider;
 import com.google.cloud.flink.bigquery.sink.serializer.BigQuerySchemaProviderImpl;
-import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.connector.base.DeliveryGuarantee;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.gcp.pubsub.PubSubSource;
 import org.dream.connector.pubsub.PubSubPublisher;
-import org.dream.connector.serializer.StringToProtoSerializer;
+import org.dream.connector.serializer.IntegerSerializer;
+import org.dream.connector.serializer.IntegerToProtoSerializer;
 
-public class BigQueryJsonExample {
+public class BigQueryIntExample {
 
     final static String projectName = null;
 
@@ -30,7 +28,7 @@ public class BigQueryJsonExample {
     public static void main(String[] args) throws Exception {
         PubSubPublisher pubSubPublisher = new PubSubPublisher(projectName, outputTopicName);
 
-        pubSubPublisher.publish("");
+        pubSubPublisher.publish(10);
         runFlinkJob(projectName, subscriptionName);
     }
 
@@ -39,13 +37,13 @@ public class BigQueryJsonExample {
         env.enableCheckpointing(10000);
 
         // Create PubSub source
-        PubSubSource<String> pubSubSource = PubSubSource.newBuilder()
-                .withDeserializationSchema(new SimpleStringSchema())
+        PubSubSource<Integer> pubSubSource = PubSubSource.newBuilder()
+                .withDeserializationSchema(new IntegerSerializer())
                 .withProjectName(projectName)
                 .withSubscriptionName(subscriptionName)
                 .build();
 
-        DataStream<String> pubsubStream = env.addSource(pubSubSource);
+        DataStream<Integer> pubsubStream = env.addSource(pubSubSource);
 
         // Sink to BigQuery
         BigQueryConnectOptions sinkConnectOptions =
@@ -61,7 +59,7 @@ public class BigQueryJsonExample {
                 BigQuerySinkConfig.newBuilder()
                         .connectOptions(sinkConnectOptions)
                         .deliveryGuarantee(DeliveryGuarantee.AT_LEAST_ONCE)
-                        .serializer(new StringToProtoSerializer())
+                        .serializer(new IntegerToProtoSerializer())
                         .schemaProvider(destSchemaProvider)
                         .build();
 
